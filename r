@@ -178,23 +178,33 @@ require(adiv)
 qe<-QE(z,d)
 
 # Put the 6 indices in the same matrix 
+indices_matrix <- cbind(sr, bg, simpc, esimp, qe, icwm)
+
 
 # Make a Draftsman plot to study their relationship (ie empirical redundancy or not)
 
+your_plotting_function(indices_matrix)  #replace 'your_plotting_function' with the actual plotting function
 
 #3.2) Effect of explanatory variables
 
 # Create 4 sub figures (ie 4 indices, or 6 with functional indices) for the 3 following effects. For tests recover DESINF and EVA EU scripts):
 
-
 # 3.2.1) Effect of slope
 # boxplot() slope + t.test() (check hypotheses and orient the test more precisely)
 
 par(mfrow=c(2,2))
+
 boxplot(sr~slope)
+your_statistical_test_function(sr, slope) #(replace 'your_plotting_function' and 'your_statistical_test_function' with actual functions)
+
 boxplot(bg~slope)
+your_statistical_test_function(bg, slope)
+
 boxplot(simpc~slope)
+your_statistical_test_function(simpc, slope)
+
 boxplot(esimp~slope)
+your_statistical_test_function(esimp, slope)
 
 # Mean and sd data for each modality of a qualitative variable
 round(tapply(sr,slope, mean),2)
@@ -217,6 +227,8 @@ round(tapply(esimp,slope, sd), 2)
 
 plot(sr ~ rec_espece_dominant_arboree)
 scatter.smooth(sr ~ rec_espece_dominant_arboree, span = 2/3, degree = 2)
+correlation_result <- cor.test(sr, rec_espece_dominant_arboree)
+correlation_result
 
 # Also to be done for green oak and Aleppo pine overlays
 
@@ -242,7 +254,7 @@ scatter.smooth(sr ~ rec_espece_dominant_arboree, span = 2/3, degree = 2)
 #Gamma decomposition into beta and average alpha to determine beta for the area, by slope, between each of the 3 replicates for a given group.
 #Does the overall species composition within the study area, by slope
 
-
+gamma_result <- gamma.diversity(z, method = "multiplicative")
 
 
 
@@ -254,11 +266,14 @@ scatter.smooth(sr ~ rec_espece_dominant_arboree, span = 2/3, degree = 2)
 #Gamma decomposition into beta and average alpha to determine beta, for the area, by slope, between each of the 3 replicates for a given group.
 #Is the species composition overall within the study area, by slope
 
+beta_global_result <- beta.diversity(z, method = "multiplicative")
+
 # Perform the calculation with the multiplicative model
 
 
 #3.2.1.2) Inter-quadra
 #Presence-absence data: Jaccard
+jac <- vegdist(z, method = "jaccard")
 
 # Jaccard-PCoA (MDS)
 require(vegan)
@@ -293,6 +308,10 @@ biplot(pcobc, z)
 
 # Overlay data: same as above with Bray-Curtis method="bray".
 
+# 3.2.1.2) Inter-quadra (continued)
+# Perform the calculation with the multiplicative model
+beta_inter_quadra_result <- beta.diversity(z, method = "multiplicative")
+
 
 #3.2.2) Functional beta division
 
@@ -309,4 +328,11 @@ raoD(z, d)
 
 # 4) Sampling bias
 # boxplot RS on 3 surveys for different areas depending on the  morning /afternoon group
-
+# Assuming 'your_data' is the relevant dataset and 'morning_afternoon' is a categorical variable
+boxplot(your_data$RS ~ your_data$area * your_data$morning_afternoon,
+        xlab = "Area and Time of Day",
+        ylab = "Richness (RS)",
+        main = "Sampling Bias Analysis",
+        col = c("lightblue", "lightgreen"),
+        border = "black",
+        notch = TRUE)
