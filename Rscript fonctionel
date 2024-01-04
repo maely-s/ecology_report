@@ -242,11 +242,23 @@ correlation_result
 
 #Indices vs. cover according to slope -> ANCOVA
 #etc.
+ ancova_results <- aov(sr ~ versant * slope, data=especes2022)
+ summary(ancova_results)
 
 # 3.2.4) Effect of cover on dominant trees
 
 #boxplot S vs. dominant trees + anova() (check hypotheses and orient the test more precisely)
 #etc.
+# j'ai pas reussi le boxplot... a mosaic plot for 'versant' and 'espece_arbre_dominante'
+mosaicplot(~ versant + espece_arbre_dominante, data = especes2022, 
+           main = "Association entre versant and espece_arbre_dominante")
+
+# Create a contingency table
+contingency_table <- table(especes2022$versant, especes2022$espece_arbre_dominante)
+
+# Perform a chi-squared test
+chi_squared_results <- chisq.test(contingency_table)
+print(chi_squared_results)
 
 
 
