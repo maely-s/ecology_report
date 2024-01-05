@@ -117,9 +117,18 @@ slope<-especes2022$versant
 
 # or versant
 
-rankabuncomp(especes, y=x, factor="slope", scale="proportion", legend=T)
-rankabuncomp(especes, y=x, factor="slope", scale="abundance", legend=T)
-rankabuncomp(especes, y=x, factor="slope", scale="logabun", legend=T)
+#rankabuncomp(especes, y=x, factor="slope", scale="proportion", legend=T)
+#rankabuncomp(especes, y=x, factor="slope", scale="abundance", legend=T)
+#rankabuncomp(especes, y=x, factor="slope", scale="logabun", legend=T)
+#the package does not work so we did something different : 
+
+community_matrix <- as.matrix(especes)
+
+# Calculate rank abundance
+rank_fit <- radfit(community_matrix)
+
+# Plot the frequency rank diagram
+plot(rank_fit, main = "Frequency Rank Diagram")
 
 # Models fitting data with radfit()
 
@@ -200,7 +209,7 @@ pairs(indices_matrix)
 par(mfrow=c(2,2))
 
 boxplot(sr~slope)
-t.test(sr, slope) #(replace 'your_statistical_test_function' with actual functions)
+t.test(sr, slope) 
 
 boxplot(bg~slope)
 t.test(bg, slope)
@@ -230,9 +239,9 @@ round(tapply(esimp,slope, sd), 2)
 # 3.2.2) Effect of tree cover
 #plot() vs tree cover + lm and correlation if linear link
 
-plot(sr ~ rec_espece_dominant_arboree)
-scatter.smooth(sr ~ rec_espece_dominant_arboree, span = 2/3, degree = 2)
-correlation_result <- cor.test(sr, rec_espece_dominant_arboree)
+plot(sr ~ rec_espece_dominante_arboree)
+scatter.smooth(sr ~ rec_espece_dominante_arboree, span = 2/3, degree = 2)
+correlation_result <- cor.test(sr, rec_espece_dominante_arboree)
 correlation_result
 
 # Also to be done for green oak and Aleppo pine overlays
@@ -241,30 +250,23 @@ correlation_result
 # 3.2.3) Effect of cover compared on the south and north slopes
 
 #Indices vs. cover according to slope -> ANCOVA
-#etc.
- ancova_results <- aov(sr ~ versant * slope, data=especes2022)
- summary(ancova_results)
+
+ancova_model <- aov(sr ~ rec_espece_dominante_arboree + slope, data = especes2022)
+summary(ancova_model)
 
 # 3.2.4) Effect of cover on dominant trees
 
 #boxplot S vs. dominant trees + anova() (check hypotheses and orient the test more precisely)
-#etc.
-# j'ai pas reussi le boxplot... a mosaic plot for 'versant' and 'espece_arbre_dominante'
-mosaicplot(~ versant + espece_arbre_dominante, data = especes2022, 
-           main = "Association entre versant and espece_arbre_dominante")
 
-# Create a contingency table
-contingency_table <- table(especes2022$versant, especes2022$espece_arbre_dominante)
+boxplot(rec_espece_dominante_arboree ~ slope, data = especes2022, main = "Effect of Cover on Dominant Trees", xlab = "Slope", ylab = "Cover")
 
-# Perform a chi-squared test
-chi_squared_results <- chisq.test(contingency_table)
-print(chi_squared_results)
+# ANOVA
+anova_model <- aov(rec_espece_dominante_arboree ~ slope, data = especes2022)
 
-
+# Summarize the results
+summary(anova_model)
 
 #How is alpha diversity structured according to the explanatory variables?
-
-
 
 
 #3.2.1.1) Overall
