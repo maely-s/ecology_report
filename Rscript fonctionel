@@ -355,3 +355,34 @@ boxplot(especes2022$sr ~ especes2022$zone * especes2022$Groupe,
         col = c("lightblue", "lightgreen"),
         border = "black",
         notch = TRUE)
+
+# j'ai fais une tentative pour beta diversity c'est un peu different 
+# Total number of species
+richness_gamma <- sum(colSums(especes) > 0)
+# Average number of species per plot
+richness_plot <- apply(especes, MARGIN = 1, FUN = function(plot) sum(plot > 0))
+richness_alpha <- mean(richness_plot)
+richness_beta <- richness_gamma / richness_alpha
+```
+
+
+## Differentiation
+library("vegan")
+jaccard <-vegdist(especes, method = "jaccard")
+hist(jaccard)
+# Smooth the histogram, no values above 1
+ library("GoFKernel")
+plot(density.reflected(jaccard, upper = 1))
+bray <-vegdist(especes, method = "bray")
+plot(density.reflected(bray, upper = 1))
+                                   ```
+## Conciliation
+                                 
+especes_pca <- dudi.pca(
+especes/rowSums(especes), 
+scannf = FALSE, 
+nf = 2,
+center = TRUE,
+scale = FALSE )
+scatter(especes_pca, clab.col = 0)
+
